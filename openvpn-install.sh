@@ -39,8 +39,7 @@ elif [[ -e /etc/fedora-release ]]; then
 	os_version=$(grep -oE '[0-9]+' /etc/fedora-release | head -1)
 	group_name="nobody"
 else
-	echo "This installer seems to be running on an unsupported distribution.
-Supported distributions are Ubuntu, Debian, CentOS, and Fedora."
+	echo "似乎不支持你的系统请选用 Ubuntu, Debian, CentOS, and Fedora."
 	exit
 fi
 
@@ -100,14 +99,14 @@ new_client () {
 
 if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 	clear
-	echo 'Welcome to this OpenVPN road warrior installer!'
+	echo '欢迎使用此OpenVPN安装程序！'
 	# If system has a single IPv4, it is selected automatically. Else, ask the user
 	if [[ $(ip -4 addr | grep inet | grep -vEc '127(\.[0-9]{1,3}){3}') -eq 1 ]]; then
 		ip=$(ip -4 addr | grep inet | grep -vE '127(\.[0-9]{1,3}){3}' | cut -d '/' -f 1 | grep -oE '[0-9]{1,3}(\.[0-9]{1,3}){3}')
 	else
 		number_of_ip=$(ip -4 addr | grep inet | grep -vEc '127(\.[0-9]{1,3}){3}')
 		echo
-		echo "Which IPv4 address should be used?"
+		echo "应该使用哪个IPv4地址？"
 		ip -4 addr | grep inet | grep -vE '127(\.[0-9]{1,3}){3}' | cut -d '/' -f 1 | grep -oE '[0-9]{1,3}(\.[0-9]{1,3}){3}' | nl -s ') '
 		read -p "IPv4 address [1]: " ip_number
 		until [[ -z "$ip_number" || "$ip_number" =~ ^[0-9]+$ && "$ip_number" -le "$number_of_ip" ]]; do
@@ -120,14 +119,14 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 	# If $ip is a private IP address, the server must be behind NAT
 	if echo "$ip" | grep -qE '^(10\.|172\.1[6789]\.|172\.2[0-9]\.|172\.3[01]\.|192\.168)'; then
 		echo
-		echo "This server is behind NAT. What is the public IPv4 address or hostname?"
+		echo "该服务器位于NAT之后。 什么是公共IPv4地址或主机名？"
 		# Get public IP and sanitize with grep
 		get_public_ip=$(grep -m 1 -oE '^[0-9]{1,3}(\.[0-9]{1,3}){3}$' <<< "$(wget -T 10 -t 1 -4qO- "http://ip1.dynupdate.no-ip.com/" || curl -m 10 -4Ls "http://ip1.dynupdate.no-ip.com/")")
-		read -p "Public IPv4 address / hostname [$get_public_ip]: " public_ip
+		read -p "公网IP [$get_public_ip]: " public_ip
 		# If the checkip service is unavailable and user didn't provide input, ask again
 		until [[ -n "$get_public_ip" || -n "$public_ip" ]]; do
-			echo "Invalid input."
-			read -p "Public IPv4 address / hostname: " public_ip
+			echo "无效输入"
+			read -p "公网IP： " public_ip
 		done
 		[[ -z "$public_ip" ]] && public_ip="$get_public_ip"
 	fi
@@ -144,7 +143,7 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 		read -p "IPv6 address [1]: " ip6_number
 		until [[ -z "$ip6_number" || "$ip6_number" =~ ^[0-9]+$ && "$ip6_number" -le "$number_of_ip6" ]]; do
 			echo "$ip6_number: invalid selection."
-			read -p "IPv6 address [1]: " ip6_number
+			read -p "IPv6 地址 [1]: " ip6_number
 		done
 		[[ -z "$ip6_number" ]] && ip6_number="1"
 		ip6=$(ip -6 addr | grep 'inet6 [23]' | cut -d '/' -f 1 | grep -oE '([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}' | sed -n "$ip6_number"p)
