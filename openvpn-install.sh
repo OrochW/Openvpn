@@ -188,7 +188,7 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 	done
 	echo
 	echo "配置文件叫什么名称？(英文)"
-	read -p "Name [client]: " unsanitized_client
+	read -p "配额名称: " unsanitized_client
 	# Allow a limited set of characters to avoid conflicts
 	client=$(sed 's/[^0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-]/_/g' <<< "$unsanitized_client")
 	[[ -z "$client" ]] && client="client"
