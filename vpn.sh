@@ -13,7 +13,7 @@ case $choose in
         case $choose1 in
                         1)
                                 yum install -y wget
-                                wget https://raw.githubusercontent.com/OrochW/Openvpn/main/vpn.sh
+                                wget https://raw.githubusercontent.com/OrochW/Openvpn/main/openvpn-install.sh
                         ;;
 
                         2)
