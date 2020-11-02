@@ -31,7 +31,6 @@ case $choose in
             3 )
                 echo "此项仅适用于卸载/管理"
                 bash openvpn-install.sh
-                rm -rf /etc/openvpn/psw-file
             ;;
             *)
                 echo "没有符合"$choose1"的服务被执行!"
