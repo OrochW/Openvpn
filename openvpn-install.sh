@@ -150,7 +150,7 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 		ip6=$(ip -6 addr | grep 'inet6 [23]' | cut -d '/' -f 1 | grep -oE '([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}' | sed -n "$ip6_number"p)
 	fi
 	echo
-	echo "Which protocol should OpenVPN use?"
+	echo "要选择哪一种网络协议？"
 	echo "   1) UDP (recommended)"
 	echo "   2) TCP"
 	read -p "Protocol [1]: " protocol
@@ -167,7 +167,7 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 		;;
 	esac
 	echo
-	echo "What port should OpenVPN listen to?"
+	echo "OpenVPN是用哪一个端口？"
 	read -p "Port [1194]: " port
 	until [[ -z "$port" || "$port" =~ ^[0-9]+$ && "$port" -le 65535 ]]; do
 		echo "$port: invalid port."
@@ -175,9 +175,9 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 	done
 	[[ -z "$port" ]] && port="1194"
 	echo
-	echo "Select a DNS server for the clients:"
-	echo "   1) Current system resolvers"
-	echo "   2) Google"
+	echo "选择哪个DNS作为客户端的DNS"
+	echo "   1) Google"
+	echo "   2) 远程主机"
 	echo "   3) 1.1.1.1"
 	echo "   4) OpenDNS"
 	echo "   5) Quad9"
@@ -188,13 +188,13 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 		read -p "DNS server [1]: " dns
 	done
 	echo
-	echo "Enter a name for the first client:"
+	echo "配置文件叫什么名称？(英文)"
 	read -p "Name [client]: " unsanitized_client
 	# Allow a limited set of characters to avoid conflicts
 	client=$(sed 's/[^0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-]/_/g' <<< "$unsanitized_client")
 	[[ -z "$client" ]] && client="client"
 	echo
-	echo "OpenVPN installation is ready to begin."
+	echo "OpenVPN准备开始安装"
 	# Install a firewall in the rare case where one is not already available
 	if ! systemctl is-active --quiet firewalld.service && ! hash iptables 2>/dev/null; then
 		if [[ "$os" == "centos" || "$os" == "fedora" ]]; then
@@ -207,7 +207,7 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 			firewall="iptables"
 		fi
 	fi
-	read -n1 -r -p "Press any key to continue..."
+	read -n1 -r -p "输入任意键继续"
 	# If running inside a container, disable LimitNPROC to prevent conflicts
 	if systemd-detect-virt -cq; then
 		mkdir /etc/systemd/system/openvpn-server@server.service.d/ 2>/dev/null
@@ -431,13 +431,13 @@ verb 3" > /etc/openvpn/server/client-common.txt
 	echo "New clients can be added by running this script again."
 else
 	clear
-	echo "OpenVPN is already installed."
+	echo "OpenVPN 安装完毕！"
 	echo
-	echo "Select an option:"
-	echo "   1) Add a new client"
-	echo "   2) Revoke an existing client"
-	echo "   3) Remove OpenVPN"
-	echo "   4) Exit"
+	echo "请选择！"
+	echo "   1) 新建配置文件"
+	echo "   2) 移除现有的配置文件"
+	echo "   3) 卸载 OpenVPN"
+	echo "   4) 退出"
 	read -p "Option: " option
 	until [[ "$option" =~ ^[1-4]$ ]]; do
 		echo "$option: invalid selection."
@@ -446,7 +446,7 @@ else
 	case "$option" in
 		1)
 			echo
-			echo "Provide a name for the client:"
+			echo "输入配置文件名称"
 			read -p "Name: " unsanitized_client
 			client=$(sed 's/[^0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-]/_/g' <<< "$unsanitized_client")
 			while [[ -z "$client" || -e /etc/openvpn/server/easy-rsa/pki/issued/"$client".crt ]]; do
@@ -459,7 +459,7 @@ else
 			# Generates the custom client.ovpn
 			new_client
 			echo
-			echo "$client added. Configuration available in:" ~/"$client.ovpn"
+			echo "$client 配置文件已创建名称是:" ~/"$client.ovpn"
 			exit
 		;;
 		2)
@@ -472,7 +472,7 @@ else
 				exit
 			fi
 			echo
-			echo "Select the client to revoke:"
+			echo "选择要移除的配置文件："
 			tail -n +2 /etc/openvpn/server/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | nl -s ') '
 			read -p "Client: " client_number
 			until [[ "$client_number" =~ ^[0-9]+$ && "$client_number" -le "$number_of_clients" ]]; do
@@ -481,7 +481,7 @@ else
 			done
 			client=$(tail -n +2 /etc/openvpn/server/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | sed -n "$client_number"p)
 			echo
-			read -p "Confirm $client revocation? [y/N]: " revoke
+			read -p "确定移除 $client  [y/N]: " revoke
 			until [[ "$revoke" =~ ^[yYnN]*$ ]]; do
 				echo "$revoke: invalid selection."
 				read -p "Confirm $client revocation? [y/N]: " revoke
@@ -495,19 +495,19 @@ else
 				# CRL is read with each client connection, when OpenVPN is dropped to nobody
 				chown nobody:"$group_name" /etc/openvpn/server/crl.pem
 				echo
-				echo "$client revoked!"
+				echo "$client 已移除"
 			else
 				echo
-				echo "$client revocation aborted!"
+				echo "$client 不存在！"
 			fi
 			exit
 		;;
 		3)
 			echo
-			read -p "Confirm OpenVPN removal? [y/N]: " remove
+			read -p "确定要卸载openvpn？ [y/N]: " remove
 			until [[ "$remove" =~ ^[yYnN]*$ ]]; do
-				echo "$remove: invalid selection."
-				read -p "Confirm OpenVPN removal? [y/N]: " remove
+				echo "$remove: 属于无效选择"
+				read -p "确定要卸载？ [y/N]: " remove
 			done
 			if [[ "$remove" =~ ^[yY]$ ]]; then
 				port=$(grep '^port ' /etc/openvpn/server/server.conf | cut -d " " -f 2)
@@ -546,10 +546,10 @@ else
 					yum remove -y openvpn
 				fi
 				echo
-				echo "OpenVPN removed!"
+				echo "OpenVPN 已卸载"
 			else
 				echo
-				echo "OpenVPN removal aborted!"
+				echo "OpenVPN 没有安装"
 			fi
 			exit
 		;;
