@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "   1) 安装/卸载/管理"
+echo "   1) 安装/管理/卸载"
 echo "   2) 创建用户"
 echo "   3) 查看用户"
 echo "   4) 删除所有用户"
@@ -9,7 +9,7 @@ case $choose in
     1|"")
         echo "   1) 安装步骤一"
         echo "   2) 安装步骤二"
-        echo "   3) 卸载"
+        echo "   3) 管理/卸载"
         read -p "请选择：" choose1
         case $choose1 in
             1)
