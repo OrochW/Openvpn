@@ -23,7 +23,7 @@ case $choose in
                 echo 'test test' >> /etc/openvpn/psw-file
                 echo "script-security 3"  >> /etc/openvpn/server/server.conf
                 echo "auth-user-pass-verify /etc/openvpn/server/checkpsw.sh via-env"  >> /etc/openvpn/server/server.conf
-                cho "username-as-common-name"  >> /etc/openvpn/server/server.conf
+                echo "username-as-common-name"  >> /etc/openvpn/server/server.conf
                 echo "verify-client-cert none"  >> /etc/openvpn/server/server.conf
                 systemctl restart openvpn-server@server
                 echo "auth-user-pass" >> *.ovpn
