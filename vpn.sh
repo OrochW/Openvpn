@@ -13,7 +13,6 @@ case $choose in
         read -p "请选择：" choose1
         case $choose1 in
             1)
-                yum install -y wget
                 rm -rf openvpn-install.sh
                 wget https://raw.githubusercontent.com/OrochW/Openvpn/main/openvpn-install.sh && bash openvpn-install.sh
             ;;
