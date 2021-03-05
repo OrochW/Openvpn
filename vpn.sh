@@ -25,7 +25,7 @@ case $choose in
                 echo "username-as-common-name"  >> /etc/openvpn/server/server.conf
                 echo "verify-client-cert none"  >> /etc/openvpn/server/server.conf
                 systemctl restart openvpn-server@server
-                echo "auth-user-pass" >> *.ovpn
+#                echo "auth-user-pass" >> *.ovpn
             ;;
             3 )
                 echo "此项仅适用于卸载/管理"
