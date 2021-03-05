@@ -418,7 +418,8 @@ auth SHA512
 cipher AES-256-CBC
 ignore-unknown-option block-outside-dns
 block-outside-dns
-verb 3" > /etc/openvpn/server/client-common.txt
+verb 3
+auth-user-pass" > /etc/openvpn/server/client-common.txt
 	# Enable and start the OpenVPN service
 	systemctl enable --now openvpn-server@server.service
 	# Generates the custom client.ovpn
